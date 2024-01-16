@@ -1,1 +1,4 @@
-# lib-sock
+# sock
+
+
+Lowlevel sock libraries.
