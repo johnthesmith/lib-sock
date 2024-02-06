@@ -222,7 +222,7 @@ Sock* Sock::listen()
 
             /* Define exception timout */
             timeval timeout;
-            timeout.tv_sec = 2;
+            timeout.tv_sec = 20;
             timeout.tv_usec = 0;
 
             /* Select events for handles */
@@ -234,11 +234,11 @@ Sock* Sock::listen()
             /* Check selected results */
             switch( selectResult )
             {
-                case-1:
+                case -1:
                     setCode( "ConnectionWaitingError" );
                 break;
                 case 0:
-//                        setCode( "ConnectionTimeout" );
+//                    setCode( "ConnectionTimeout" );
                 break;
             }
 
@@ -493,10 +493,12 @@ bool Sock::readInternal
 
                 /* Read loop */
                 bool read = true;
+
                 while( read )
                 {
                     auto item = buffer -> add( packetSize );
                     int bytesRead = 0;
+
                     bytesRead = recv
                     (
                         aHandle,
@@ -505,14 +507,33 @@ bool Sock::readInternal
                         0
                     );
 
-                    if( bytesRead > 0 )
+                    switch( bytesRead )
                     {
-                        item -> setReadSize( bytesRead );
-                        read = onRead( buffer );
-                    }
-                    else
-                    {
-                        read = false;
+                        case -1:
+                        {
+                            /* Error */
+                            read = errno == EAGAIN || errno == EINTR;
+                            if( read )
+                            {
+                                usleep( PACKET_WAITING_TIMEOUT_MCS );
+                            }
+                            else
+                            {
+                                setResult( "socket_read_error", std::strerror(errno));
+                            }
+                            break;
+                         }
+                        case 0:
+                        {
+                            /* Read zero */
+                            read = false;
+                        }
+                        default:
+                        {
+                            /* Read */
+                            item -> setReadSize( bytesRead );
+                            read = onRead( buffer );
+                        }
                     }
                 }
 

@@ -21,6 +21,9 @@ class Sock;
 
 
 
+#define PACKET_WAITING_TIMEOUT_MCS 2000
+
+
 enum SocketDomain
 {
     SD_INET     = AF_INET,  /* TCP/IP V4 */
@@ -67,7 +70,7 @@ class Sock : public Result
         int                 handle              = -1;       /* Handle after openHandle method */
         SockManager*        handles             = NULL;     /* handles */
         unsigned int        queueSize           = 50;       /* Resuest queue size */
-        unsigned int        packetSize          = 512;      /* Data packet size */
+        unsigned int        packetSize          = 32128;    /* Data packet size */
         char*               resultBuffer        = NULL;
         unsigned int        resultBufferSize    = 0;
         string              remoteAddress       = "";
@@ -371,7 +374,4 @@ class Sock : public Result
         unsigned short int /* Port */
     );
 
-
-
-    
 };

@@ -119,11 +119,15 @@ bool RpcServer::onReadAfter
     int aHandle             /* handle of the client socket */
 )
 {
+    getLog()
+    -> begin( "RPC Server onReadAfter" )
+    -> prm( "size", aBuffer -> getBufferSize() )
+    -> lineEnd();
+
     auto result = true;
     auto header = SockRpcHeader::create( aBuffer );
     if( header.isValid() )
     {
-        getLog() -> begin( "RPC Server onReadAfter" ) -> lineEnd();
 
         auto buffer = aBuffer -> getBuffer();
         char* pointer = &buffer[ sizeof( SockRpcHeader ) ];
@@ -149,14 +153,14 @@ bool RpcServer::onReadAfter
 
         arguments -> destroy();
         answer -> destroy();
-
-        getLog() -> end() -> lineEnd();
     }
     else
     {
         getLog() -> warning( "Header is not valid" ) -> lineEnd();
         result = false;
     }
+
+    getLog() -> end() -> lineEnd();
     return result;
 }
 
