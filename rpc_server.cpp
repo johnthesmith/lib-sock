@@ -144,9 +144,9 @@ bool RpcServer::onReadAfter
         );
 
         /* Call onAfter method for server */
-        ParamListLog::dump( getLog(), arguments, "arguments" );
         onCallAfter( arguments, answer );
-        ParamListLog::dump( getLog(), answer, "answer" );
+        ParamListLog::dump( getLog(), arguments, "arguments" );
+        ParamListLog::dump( getLog(), answer, "result" );
 
         /* Send answer to client */
         write( answer, aHandle );

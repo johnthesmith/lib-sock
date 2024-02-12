@@ -158,17 +158,24 @@ RpcClient* RpcClient::call()
 {
     if( isOk() )
     {
+cout << "1\n";
         connect();
+cout << "2\n";
         if( isOk() )
         {
+cout << "3\n";
             if( request != NULL )
             {
+cout << "4\n";
                 /* Send buffer to server */
                 write( request );
+cout << "5\n";
                 /* Read answer from server */
                 read();
+cout << "6\n";
             }
         };
+cout << "7\n";
     }
     return this;
 }
