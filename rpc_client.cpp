@@ -101,51 +101,6 @@ RpcClient* RpcClient::create
 
 
 
-
-/*
-    On before read
-    Method may be overrided
-*/
-bool RpcClient::onReadBefore
-(
-    string  /* ip income but not use */
-)
-{
-    return onCallBefore();
-}
-
-
-
-/*
-    On after read
-    Method may be overrided
-*/
-bool RpcClient::onReadAfter
-(
-    SockBuffer* aBuffer, /* buffer */
-    int
-)
-{
-    auto header = SockRpcHeader::create( aBuffer );
-
-    if( header.isValid() )
-    {
-        auto buffer = aBuffer -> getBuffer();
-        void* pointer = &buffer[ sizeof( SockRpcHeader ) ];
-
-        /* Create parms from buffer */
-        answer -> clear() -> fromBuffer( pointer, header.argumentsSize );
-        onCallAfter();
-    }
-    else
-    {
-        getLog() -> warning( "RPC server sent invalid header for RPC client" );
-    }
-    return true;
-}
-
-
-
 /*
     Call method
         short int       sizeName        size of method name
@@ -158,24 +113,17 @@ RpcClient* RpcClient::call()
 {
     if( isOk() )
     {
-cout << "1\n";
         connect();
-cout << "2\n";
         if( isOk() )
         {
-cout << "3\n";
             if( request != NULL )
             {
-cout << "4\n";
                 /* Send buffer to server */
                 write( request );
-cout << "5\n";
                 /* Read answer from server */
-                read();
-cout << "6\n";
+                clientRead();
             }
         };
-cout << "7\n";
     }
     return this;
 }
@@ -246,35 +194,6 @@ RpcClient* RpcClient::call
 
 
 
-/******************************************************************************
-    Events
-*/
-
-
-/*
-    On call event
-    Method may be ovverided
-*/
-RpcClient* RpcClient::onCallBefore()
-{
-//    getLog() -> trace( "Client RPC on call before" ) -> lineEnd();
-    return this;
-}
-
-
-
-/*
-    Servers On call after event
-    Method may be ovverided
-*/
-RpcClient* RpcClient::onCallAfter()
-{
-//    getLog() -> trace( "Client RPC on call after" ) -> lineEnd();
-    return this;
-}
-
-
-
 ParamList* RpcClient::getRequest()
 {
     return request;
@@ -320,3 +239,80 @@ RpcClient* RpcClient::setAnswer
     return this;
 }
 
+
+
+
+
+/******************************************************************************
+    Events
+*/
+
+
+/*
+    On call event
+    Method may be ovverided
+*/
+RpcClient* RpcClient::onCallBefore()
+{
+//    getLog() -> trace( "Client RPC on call before" ) -> lineEnd();
+    return this;
+}
+
+
+
+/*
+    Servers On call after event
+    Method may be ovverided
+*/
+RpcClient* RpcClient::onCallAfter()
+{
+//    getLog() -> trace( "Client RPC on call after" ) -> lineEnd();
+    return this;
+}
+
+
+
+/*
+    On before read
+    Method may be overrided
+*/
+bool RpcClient::onReadBefore
+(
+    string a /* ip income but not use */
+)
+{
+    SockRpc::onReadBefore( a );
+    return onCallBefore();
+}
+
+
+
+/*
+    On after read
+    Method may be overrided
+*/
+bool RpcClient::onReadAfter
+(
+    SockBuffer* aBuffer, /* buffer */
+    int
+)
+{
+    SockRpc::onReadAfter( aBuffer, 0 );
+
+    auto header = SockRpcHeader::create( aBuffer );
+
+    if( header.isValid() )
+    {
+        auto buffer = aBuffer -> getBuffer();
+        void* pointer = &buffer[ sizeof( SockRpcHeader ) ];
+
+        /* Create parms from buffer */
+        answer -> clear() -> fromBuffer( pointer, header.argumentsSize );
+        onCallAfter();
+    }
+    else
+    {
+        getLog() -> warning( "RPC server sent invalid header for RPC client" );
+    }
+    return true;
+}

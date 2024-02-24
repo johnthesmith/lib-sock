@@ -138,6 +138,17 @@ class SockRpc : public Sock
 
 
 
+        /*
+            Write buffer to socket with RPC header
+        */
+        SockRpc* write
+        (
+            ParamList*,     /* ParamList */
+            int = -1        /* Handle for writing */
+        );
+
+
+
         /******************************************************************************
             Events
         */
@@ -185,12 +196,12 @@ class SockRpc : public Sock
 
 
         /*
-            Write buffer to socket with RPC header
+            On read after event
         */
-        SockRpc* write
+        virtual bool onReadAfter
         (
-            ParamList*,     /* ParamList */
-            int = -1        /* Handle for writing */
+            SockBuffer*, /* buffers parts */
+            int
         );
 
 };

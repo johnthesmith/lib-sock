@@ -8,7 +8,9 @@
 
 #include "sock.h"
 #include "../core/heap.h"
+#include "../core/utils.h"
 #include "../core/buffer_to_hex.h"
+#include "../json/param_list.h"
 
 
 
@@ -281,7 +283,7 @@ Sock* Sock::listen()
             /* Read clients data */
             if( isOk() )
             {
-                for( int i = 0; i < connections.size(); i++ )
+                for( long unsigned int i = 0; i < connections.size(); i++ )
                 {
                     auto connection = connections[ i ];
                     if( FD_ISSET( connection.handle, &readset ))
@@ -318,8 +320,15 @@ Sock* Sock::connect()
         if( handle == -1 )
         {
             handle = socket( domain, type, 0 );
-            if( handle > -1 )
+            if( handle == -1 )
             {
+                setCode( "SocketCreateError" );
+            }
+            else
+            {
+                /* Nonblock socket enabled */
+                fcntl( handle, F_SETFL, O_NONBLOCK );
+
                 /* On before */
                 onConnectBefore();
 
@@ -386,10 +395,6 @@ Sock* Sock::connect()
                 /* On after */
                 onConnectAfter();
             }
-            else
-            {
-                setCode( "SocketCreateError" );
-            }
 
             if( !isOk() )
             {
@@ -421,18 +426,22 @@ Sock* Sock::write
         }
         else
         {
-            if
+            auto sended = send
             (
-                send
-                (
-                    aHandle == -1 ? handle : aHandle,
-                    aBuffer,
-                    aSize,
-                    MSG_NOSIGNAL    /* Prevent SIGPIPE */
-                ) < 0
-            )
+                aHandle == -1 ? handle : aHandle,
+                aBuffer,
+                aSize,
+                MSG_NOSIGNAL    /* Prevent SIGPIPE */
+            );
+
+            if( sended < 0 || (size_t) sended != aSize )
             {
-                setCode( "SocketWriteError" );
+                auto error = Result::create( "SocketWriteError" );
+                error -> getDetails()
+                -> setInt( "size", aSize )
+                -> setInt( "sended", sended );
+                onError( error );
+                error -> destroy();
             }
         }
     }
@@ -459,9 +468,41 @@ Sock* Sock::write
 /*
     Read buffer
 */
-Sock* Sock::read()
+Sock* Sock::clientRead()
 {
-    readInternal( handle );
+    /* create FD_SET - list of events */
+    fd_set readset;             /* Define the structure */
+    FD_ZERO( &readset );        /* Clear structure */
+    FD_SET( handle, &readset ); /* Add listener handle to structure */
+
+    /* Define exception timout */
+    timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+    /* Select events for handles */
+    auto selectResult = select
+    (
+        handle + 1, &readset, NULL, NULL, &timeout
+    );
+
+    /* Check selected results */
+    switch( selectResult )
+    {
+        case -1:
+            setCode( "ConnectionWaitingError" );
+        break;
+        case 0:
+            setCode( "ConnectionTimeout" );
+        break;
+    }
+
+    /* Check servers handle in structure */
+    if( isOk() && FD_ISSET( handle, &readset ))
+    {
+        readInternal( handle );
+    }
+
     return this;
 }
 
@@ -480,11 +521,13 @@ bool Sock::readInternal
 
     if( isOk() )
     {
+        auto error = Result::create();
+
         if( onReadBefore( aIp ))
         {
             if( !isConnected() )
             {
-                setCode( "NoConnect" );
+                error -> setResult( "no_connected" );
             }
             else
             {
@@ -493,6 +536,7 @@ bool Sock::readInternal
 
                 /* Read loop */
                 bool read = true;
+                long long readMoment = now();
 
                 while( read )
                 {
@@ -513,14 +557,25 @@ bool Sock::readInternal
                         {
                             /* Error */
                             read = errno == EAGAIN || errno == EINTR;
+
                             if( read )
                             {
                                 usleep( PACKET_WAITING_TIMEOUT_MCS );
+                                read = now() - readMoment < READ_WAITING_TIMEOUT_MCS;
+                                if( !read )
+                                {
+                                    error -> setCode( "socket_read_waiting_error" );
+                                }
                             }
                             else
                             {
-                                setResult( "socket_read_error", std::strerror(errno));
+                                error -> setResult
+                                (
+                                    "socket_read_error",
+                                    std::strerror(errno)
+                                );
                             }
+
                             break;
                          }
                         case 0:
@@ -532,19 +587,31 @@ bool Sock::readInternal
                         {
                             /* Read */
                             item -> setReadSize( bytesRead );
+                            readMoment = now();
                             read = onRead( buffer );
                         }
                     }
                 }
 
-                /* Finall call onReadAfter */
-                result = onReadAfter( buffer, aHandle );
+                if( error -> isOk() )
+                {
+                    /* Finall call onReadAfter */
+                    result = onReadAfter( buffer, aHandle );
+                }
 
                 /* Destroy buffer */
                 buffer -> destroy();
             }
         }
+
+        if( !error -> isOk() )
+        {
+            onError( error );
+        }
+
+        error -> destroy();
     }
+
     return result;
 }
 
@@ -789,6 +856,21 @@ Sock* Sock::onListenAfter
     unsigned short int aPort
 )
 {
+    return this;
+}
+
+
+
+/*
+    On Read errir
+    Event for read error
+*/
+Sock* Sock::onError
+(
+    Result* aResult
+)
+{
+    resultFrom( aResult );
     return this;
 }
 

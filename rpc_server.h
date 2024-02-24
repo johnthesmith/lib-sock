@@ -107,5 +107,16 @@ class RpcServer : public SockRpc
             ParamList* = NULL,  /* Arguments */
             ParamList* = NULL   /* Results */
         );
+
+
+
+        /*
+            Servers On error event
+        */
+        virtual RpcServer* onError
+        (
+            Result*
+        );
+
 };
 

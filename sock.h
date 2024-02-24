@@ -22,6 +22,7 @@ class Sock;
 
 
 #define PACKET_WAITING_TIMEOUT_MCS 2000
+#define READ_WAITING_TIMEOUT_MCS 500000
 
 
 enum SocketDomain
@@ -70,7 +71,7 @@ class Sock : public Result
         int                 handle              = -1;       /* Handle after openHandle method */
         SockManager*        handles             = NULL;     /* handles */
         unsigned int        queueSize           = 50;       /* Resuest queue size */
-        unsigned int        packetSize          = 32128;    /* Data packet size */
+        unsigned int        packetSize          = 512;      /* Data packet size */
         char*               resultBuffer        = NULL;
         unsigned int        resultBufferSize    = 0;
         string              remoteAddress       = "";
@@ -208,13 +209,13 @@ class Sock : public Result
 
 
     /*
-        Read buffer from socket
+        Read buffer from socket for client
         Result will return to events
             onReadBefore
             onRead
             onReadAfter
     */
-    Sock* read();
+    Sock* clientRead();
 
 
 
@@ -372,6 +373,17 @@ class Sock : public Result
     virtual Sock* onListenAfter
     (
         unsigned short int /* Port */
+    );
+
+
+
+    /*
+        On Lisen after
+        Method may be overrided
+    */
+    virtual Sock* onError
+    (
+        Result*
     );
 
 };

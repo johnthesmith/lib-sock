@@ -72,8 +72,9 @@ RpcServer* RpcServer::up()
     if( !isOk() )
     {
         getLog()
-        -> warning( "Server up error" )
+        -> warning( "Server error" )
         -> prm( "code", getCode());
+        ParamListLog::dump( getLog(), getDetails());
     }
     return this;
 }
@@ -130,7 +131,6 @@ bool RpcServer::onReadAfter
     {
 
         auto buffer = aBuffer -> getBuffer();
-        char* pointer = &buffer[ sizeof( SockRpcHeader ) ];
 
         /* Get method arguments */
         auto argumentsBuffer = (void*) ( &buffer[ sizeof( SockRpcHeader ) ] );
@@ -197,4 +197,22 @@ RpcServer* RpcServer::onCallAfter
     return this;
 }
 
+
+
+
+/*
+    Servers On error event
+*/
+RpcServer* RpcServer::onError
+(
+    Result* aResult
+)
+{
+    getLog()
+    -> warning( "Server error" )
+    -> prm( "code", aResult -> getCode() )
+    -> prm( "message", aResult -> getMessage() );
+    ParamListLog::dump( getLog(), aResult -> getDetails() );
+    return this;
+}
 

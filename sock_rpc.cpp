@@ -98,6 +98,7 @@ bool SockRpc::onReadBefore
     string aIp
 )
 {
+    getLog() -> trace( "Reading" );
     return true;
 }
 
@@ -114,9 +115,21 @@ bool SockRpc::onRead
 )
 {
     auto header = SockRpcHeader::create( aBuffer );
+    getLog() -> text( "." ) -> flush();
     return header.isValid() && !header.isFull( aBuffer );
 }
 
+
+
+bool SockRpc::onReadAfter
+(
+    SockBuffer* aBuffer, /* buffers parts */
+    int
+)
+{
+    getLog() -> prm( "bytes", (int)aBuffer -> calcReadSize()) -> lineEnd();
+    return true;
+}
 
 
 
@@ -212,6 +225,8 @@ SockRpc* SockRpc::write
 
     /* Write to socket */
     Sock::write( netBuffer, netBufferSize, aHandle );
+
+    getLog() -> trace( "Writed" ) -> prm( "size bt", ( int )netBufferSize );
 
     /* Free memory */
     delete [] netBuffer;
