@@ -43,8 +43,14 @@ SockRpc
 */
 RpcClient::~RpcClient()
 {
-    request -> destroy();
-    answer -> destroy();
+    if( ownerRequest )
+    {
+        request -> destroy();
+    }
+    if( ownerAnswer )
+    {
+        answer -> destroy();
+    }
 }
 
 
@@ -216,7 +222,7 @@ RpcClient* RpcClient::setRequest
 {
     if( ownerRequest )
     {
-        ownerRequest = true;
+        ownerRequest = false;
         request -> destroy();
     }
     request = aRequest;
@@ -232,7 +238,7 @@ RpcClient* RpcClient::setAnswer
 {
     if( ownerAnswer )
     {
-        ownerAnswer = true;
+        ownerAnswer = false;
         answer -> destroy();
     }
     answer = aAnswer;
