@@ -1,8 +1,6 @@
 #include <iostream>
 #include <cstring>
 
-#include "../json/param_list_log.h"
-
 #include "rpc_client.h"
 
 

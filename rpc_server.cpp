@@ -5,7 +5,6 @@
 
 #include "rpc_server.h"
 #include "../core/buffer_to_hex.h"
-#include "../json/param_list_log.h"
 
 
 
@@ -73,8 +72,8 @@ RpcServer* RpcServer::up()
     {
         getLog()
         -> warning( "Server error" )
-        -> prm( "code", getCode());
-        ParamListLog::dump( getLog(), getDetails());
+        -> prm( "code", getCode())
+        -> dump( getDetails());
     }
     return this;
 }
@@ -145,8 +144,9 @@ bool RpcServer::onReadAfter
 
         /* Call onAfter method for server */
         onCallAfter( arguments, answer );
-        ParamListLog::dump( getLog(), arguments, "arguments" );
-        ParamListLog::dump( getLog(), answer, "result" );
+        getLog()
+        -> dump( arguments, "arguments" )
+        -> dump( answer, "result" );
 
         /* Send answer to client */
         write( answer, aHandle );
@@ -211,8 +211,9 @@ RpcServer* RpcServer::onError
     getLog()
     -> warning( "Server error" )
     -> prm( "code", aResult -> getCode() )
-    -> prm( "message", aResult -> getMessage() );
-    ParamListLog::dump( getLog(), aResult -> getDetails() );
+    -> prm( "message", aResult -> getMessage() )
+    -> dump( aResult -> getDetails() );
+
     return this;
 }
 
