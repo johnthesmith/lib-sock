@@ -115,7 +115,7 @@ bool SockRpc::onRead
 )
 {
     auto header = SockRpcHeader::create( aBuffer );
-    getLog() -> text( "." ) -> flush();
+    getLog() -> write( "." );
     return header.isValid() && !header.isFull( aBuffer );
 }
 

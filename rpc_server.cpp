@@ -120,6 +120,7 @@ bool RpcServer::onReadAfter
 )
 {
     getLog()
+    -> trapOn()
     -> begin( "RPC Server onReadAfter" )
     -> prm( "size", aBuffer -> getBufferSize() )
     -> lineEnd();
@@ -160,7 +161,10 @@ bool RpcServer::onReadAfter
         result = false;
     }
 
-    getLog() -> end() -> lineEnd();
+    getLog()
+    -> end()
+    -> lineEnd()
+    -> trapOff();
     return result;
 }
 
