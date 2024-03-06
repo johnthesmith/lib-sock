@@ -97,7 +97,6 @@ SockManager* SockManager::closeHandlesByThread
 )
 {
     auto mask =  getId( aId );
-
     map
     <
         string,

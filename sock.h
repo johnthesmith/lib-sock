@@ -77,6 +77,8 @@ class Sock : public Result
         string              remoteAddress       = "";
         string              id                  = "";       /* Socket id for handles */
 
+        bool                listening           = false;
+
         /*
             Arguments
         */
@@ -89,7 +91,6 @@ class Sock : public Result
             Create socket handle
         */
         Sock* openHandle();
-
 
 
         /*
@@ -168,7 +169,7 @@ class Sock : public Result
     /*
         Set connected false and stop server lisener
     */
-    Sock* disconnect();
+    Sock* stopListen();
 
 
 

@@ -205,7 +205,8 @@ Sock* Sock::listen()
             }
         }
 
-        while( isOk() && isConnected() )
+        listening = true;
+        while( isOk() && listening )
         {
             /* create FD_SET - list of events */
             fd_set readset;             /* Define the structure */
@@ -224,7 +225,7 @@ Sock* Sock::listen()
 
             /* Define exception timout */
             timeval timeout;
-            timeout.tv_sec = 20;
+            timeout.tv_sec = 1;
             timeout.tv_usec = 0;
 
             /* Select events for handles */
@@ -301,6 +302,9 @@ Sock* Sock::listen()
                 }
             }
         }
+
+        handles -> closeHandlesByThread( id );
+
         onListenAfter( port );
     }
     return this;
@@ -702,9 +706,9 @@ unsigned int Sock::getPacketSize()
 /*
     Set connected false and stop server lisener
 */
-Sock* Sock::disconnect()
+Sock* Sock::stopListen()
 {
-    handles -> closeHandlesByThread( id );
+    listening = false;
     return this;
 }
 

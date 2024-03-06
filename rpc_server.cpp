@@ -86,7 +86,7 @@ RpcServer* RpcServer::up()
 RpcServer* RpcServer::down()
 {
     getLog() -> trace( "RPC server downing" ) -> lineEnd();
-    disconnect();
+    stopListen();
     return this;
 }
 
