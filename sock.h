@@ -188,6 +188,13 @@ class Sock : public Result
 
 
     /*
+        Disconnect
+    */
+    Sock* disconnect();
+
+
+
+    /*
         Write buffer to socket
     */
     Sock* write

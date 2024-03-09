@@ -107,11 +107,6 @@ RpcClient* RpcClient::create
 
 /*
     Call method
-        short int       sizeName        size of method name
-        long long int   sizeArguments   size of data
-        long            methodName      method name
-        char            arguments       data
-
 */
 RpcClient* RpcClient::call()
 {
@@ -126,6 +121,10 @@ RpcClient* RpcClient::call()
                 write( request );
                 /* Read answer from server */
                 clientRead();
+            }
+            if( !isOk() )
+            {
+                disconnect();
             }
         };
     }

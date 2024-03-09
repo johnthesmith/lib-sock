@@ -73,6 +73,7 @@ RpcServer* RpcServer::up()
         getLog()
         -> warning( "Server error" )
         -> prm( "code", getCode())
+        -> prm( "message", getMessage())
         -> dump( getDetails());
     }
     return this;

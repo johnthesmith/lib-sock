@@ -175,6 +175,10 @@ Sock* Sock::listen()
                 addr.sin_port = htons( port );
                 addr.sin_addr.s_addr = htonl( INADDR_ANY );
 
+                /* Set reuse option for socket */
+                const int enabled = 1;
+                setsockopt( handle, SOL_SOCKET, SO_REUSEADDR, &enabled, sizeof(enabled));
+
                 /* bind socket */
                 if
                 (
@@ -186,7 +190,11 @@ Sock* Sock::listen()
                     ) < 0
                 )
                 {
-                    setCode( "ServerCreateError" );
+                    setResult
+                    (
+                        "BindSocketError",
+                         std::strerror(errno)
+                    );
                 }
             }
 
@@ -302,11 +310,13 @@ Sock* Sock::listen()
                 }
             }
         }
+        listening = false;
 
         handles -> closeHandlesByThread( id );
 
         onListenAfter( port );
     }
+
     return this;
 }
 
@@ -410,6 +420,16 @@ Sock* Sock::connect()
     return this;
 }
 
+
+
+/*
+    Connect socket
+*/
+Sock* Sock::disconnect()
+{
+    handles -> closeHandlesByThread( id );
+    return this;
+}
 
 
 /*
