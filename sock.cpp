@@ -588,7 +588,10 @@ bool Sock::readInternal
                                 read = now() - readMoment < readWaitingTimeoutMcs;
                                 if( !read )
                                 {
-                                    error -> setCode( "socket_read_waiting_error" );
+                                    error
+                                    -> setCode( "socket_read_waiting_error" )
+                                    -> getDetails()
+                                    -> setString( "a", "10" );
                                 }
                             }
                             else
