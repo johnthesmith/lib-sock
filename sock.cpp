@@ -585,7 +585,7 @@ bool Sock::readInternal
                             if( read )
                             {
                                 usleep( PACKET_WAITING_TIMEOUT_MCS );
-                                read = now() - readMoment < READ_WAITING_TIMEOUT_MCS;
+                                read = now() - readMoment < readWaitingTimeoutMcs;
                                 if( !read )
                                 {
                                     error -> setCode( "socket_read_waiting_error" );
@@ -720,6 +720,29 @@ unsigned int Sock::getPacketSize()
     return packetSize;
 }
 
+
+
+/*
+    Set read timeout
+*/
+Sock* Sock::setReadWaitingTimeoutMcs
+(
+    unsigned long long a /* Value */
+)
+{
+    readWaitingTimeoutMcs = a;
+    return this;
+}
+
+
+
+/*
+    Return read timeout
+*/
+unsigned long long Sock::getReadWaitingTimeoutMcs()
+{
+    return readWaitingTimeoutMcs;
+}
 
 
 

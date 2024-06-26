@@ -22,7 +22,7 @@ class Sock;
 
 
 #define PACKET_WAITING_TIMEOUT_MCS 2000
-#define READ_WAITING_TIMEOUT_MCS 1000000
+#define READ_WAITING_TIMEOUT_MCS 500000
 
 
 enum SocketDomain
@@ -82,10 +82,11 @@ class Sock : public Result
         /*
             Arguments
         */
-        SocketDomain        domain              = SD_INET;
-        SocketType          type                = ST_TCP;
-        string              ip                  = "127.0.0.1";
-        int                 port                = 42;
+        SocketDomain        domain                  = SD_INET;
+        SocketType          type                    = ST_TCP;
+        string              ip                      = "127.0.0.1";
+        unsigned long long  readWaitingTimeoutMcs   = READ_WAITING_TIMEOUT_MCS;
+        int                 port                    = 42;
 
         /*
             Create socket handle
@@ -290,6 +291,24 @@ class Sock : public Result
         Return id for port and ip
     */
     string getId();
+
+
+
+    /*
+        Set read timeout
+    */
+    Sock* setReadWaitingTimeoutMcs
+    (
+        unsigned long long /* Value */
+    );
+
+
+
+    /*
+        Return read timeout
+    */
+    unsigned long long getReadWaitingTimeoutMcs();
+
 
 
     /******************************************************************************
