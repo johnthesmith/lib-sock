@@ -591,7 +591,8 @@ bool Sock::readInternal
                                     error
                                     -> setCode( "socket_read_waiting_error" )
                                     -> getDetails()
-                                    -> setString( "a", "10" );
+                                    -> setString( "a", "10" )
+                                    ;
                                 }
                             }
                             else
