@@ -319,3 +319,30 @@ bool RpcClient::onReadAfter
     }
     return true;
 }
+
+
+
+/*
+    Servers On error event
+*/
+bool RpcClient::onReadError
+(
+    Result* aResult,
+    SockBuffer* aSockBuffer
+)
+{
+    auto a = SockRpcHeader::create( aSockBuffer );
+
+    getLog()
+    -> warning( "Client error" )
+    -> prm( "code", aResult -> getCode() )
+    -> prm( "message", aResult -> getMessage() )
+    -> prm( "bufferReadSize", aSockBuffer -> calcReadSize() )
+    -> prm( "itemsCount", aSockBuffer -> getItemsCount() )
+    -> prm( "bufferValud", a.isValid() )
+    -> prm( "bufferFullSize", ( long long ) a.getFullSize() )
+    -> dump( aResult -> getDetails(), "details" )
+    ;
+
+    return true;
+}

@@ -236,6 +236,7 @@ SockRpc* SockRpc::write
 }
 
 
+
 /******************************************************************************
     Header
 */
@@ -277,7 +278,30 @@ SockRpcHeader SockRpcHeader::create
     if( firstBlock != NULL && firstBlock -> getReadSize() >= headerSize )
     {
         auto pointer = firstBlock -> getPointer();
-        memcpy( &result, pointer, sizeof( SockRpcHeader ));
+        memcpy( &result, pointer, headerSize );
+    }
+
+    return result;
+}
+
+
+
+/*
+    Return filled header from memory buffer
+*/
+SockRpcHeader SockRpcHeader::create
+(
+    char* aBuffer,
+    size_t aSize
+)
+{
+    SockRpcHeader result;
+
+    unsigned int headerSize = sizeof( SockRpcHeader );
+
+    if( aBuffer != NULL && aSize >= headerSize )
+    {
+        memcpy( &result, aBuffer, headerSize );
     }
 
     return result;
@@ -315,6 +339,3 @@ size_t SockRpcHeader::getFullSize()
 {
     return sizeof( SockRpcHeader ) + argumentsSize;
 }
-
-
-

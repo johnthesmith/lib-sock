@@ -208,7 +208,7 @@ RpcServer* RpcServer::onCallAfter
 /*
     Servers On error event
 */
-RpcServer* RpcServer::onError
+bool RpcServer::onError
 (
     Result* aResult
 )
@@ -217,8 +217,9 @@ RpcServer* RpcServer::onError
     -> warning( "Server error" )
     -> prm( "code", aResult -> getCode() )
     -> prm( "message", aResult -> getMessage() )
-    -> dump( aResult -> getDetails() );
+    -> dump( aResult -> getDetails() )
+    ;
 
-    return this;
+    return true;
 }
 

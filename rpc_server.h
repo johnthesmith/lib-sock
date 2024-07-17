@@ -113,7 +113,7 @@ class RpcServer : public SockRpc
         /*
             Servers On error event
         */
-        virtual RpcServer* onError
+        virtual bool onError
         (
             Result*
         );

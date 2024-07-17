@@ -167,4 +167,16 @@ class RpcClient : public SockRpc
 
 
         ParamList* getAnswer();
+
+
+
+        /*
+            Client On error event
+        */
+        virtual bool onReadError
+        (
+            Result*,
+            SockBuffer*
+        );
+
 };

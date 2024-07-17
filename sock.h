@@ -71,7 +71,7 @@ class Sock : public Result
         int                 handle              = -1;       /* Handle after openHandle method */
         SockManager*        handles             = NULL;     /* handles */
         unsigned int        queueSize           = 50;       /* Resuest queue size */
-        unsigned int        packetSize          = 512;      /* Data packet size */
+        unsigned int        packetSize          = 1024;     /* Data packet size */
         char*               resultBuffer        = NULL;
         unsigned int        resultBufferSize    = 0;
         string              remoteAddress       = "";
@@ -405,12 +405,21 @@ class Sock : public Result
 
 
     /*
-        On Lisen after
-        Method may be overrided
+        On read error event
     */
-    virtual Sock* onError
+    virtual bool onReadError
+    (
+        Result*,
+        SockBuffer*
+    );
+
+
+
+    /*
+        On write error event
+    */
+    virtual bool onWriteError
     (
         Result*
     );
-
 };

@@ -464,7 +464,7 @@ Sock* Sock::write
                 error -> getDetails()
                 -> setInt( "size", aSize )
                 -> setInt( "sended", sended );
-                onError( error );
+                onWriteError( error );
                 error -> destroy();
             }
         }
@@ -545,7 +545,10 @@ bool Sock::readInternal
 
     if( isOk() )
     {
+        /* Create error */
         auto error = Result::create();
+        /* Create buffer */
+        auto buffer = SockBuffer::create();
 
         if( onReadBefore( aIp ))
         {
@@ -555,9 +558,6 @@ bool Sock::readInternal
             }
             else
             {
-                /* Create buffer */
-                auto buffer = SockBuffer::create();
-
                 /* Read loop */
                 bool read = true;
                 long long readMoment = now();
@@ -585,13 +585,16 @@ bool Sock::readInternal
                             if( read )
                             {
                                 usleep( PACKET_WAITING_TIMEOUT_MCS );
-                                read = now() - readMoment < readWaitingTimeoutMcs;
+                                auto waitingTime = now() - readMoment;
+                                read = waitingTime < readWaitingTimeoutMcs;
                                 if( !read )
                                 {
                                     error
                                     -> setCode( "socket_read_waiting_error" )
                                     -> getDetails()
-                                    -> setString( "a", "10" )
+                                    -> setInt( "packetSize", packetSize )
+                                    -> setInt( "readWaitingTimeoutMcs", readWaitingTimeoutMcs )
+                                    -> setInt( "waitingTimeMcs", waitingTime )
                                     ;
                                 }
                             }
@@ -628,15 +631,15 @@ bool Sock::readInternal
                 }
 
                 /* Destroy buffer */
-                buffer -> destroy();
             }
         }
 
         if( !error -> isOk() )
         {
-            onError( error );
+            onReadError( error, buffer );
         }
 
+        buffer -> destroy();
         error -> destroy();
     }
 
@@ -913,18 +916,31 @@ Sock* Sock::onListenAfter
 
 
 /*
-    On Read errir
-    Event for read error
+    On read error
 */
-Sock* Sock::onError
+bool Sock::onReadError
+(
+    Result* aResult,
+    SockBuffer* aSock
+)
+{
+    resultFrom( aResult );
+    return aResult -> isOk();
+}
+
+
+
+/*
+    On write error
+*/
+bool Sock::onWriteError
 (
     Result* aResult
 )
 {
     resultFrom( aResult );
-    return this;
+    return aResult -> isOk();
 }
-
 
 
 

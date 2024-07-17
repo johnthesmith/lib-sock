@@ -129,7 +129,7 @@ SockBuffer* SockBuffer::destroyResultBuffer()
 
 
 /*
-    Return first element of buffer
+    Return pointer of buffer
 */
 char* SockBuffer::getBuffer()
 {
@@ -184,3 +184,14 @@ SockBufferItem* SockBuffer::getFirstBuffer()
 {
     return items.front();
 }
+
+
+
+/*
+    Return count of items in buffer
+*/
+int SockBuffer::getItemsCount()
+{
+    return items.size();
+}
+

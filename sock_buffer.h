@@ -110,4 +110,10 @@ class SockBuffer
         */
         SockBufferItem* getFirstBuffer();
 
+
+
+        /*
+            Return count of items in buffer
+        */
+        int getItemsCount();
 };

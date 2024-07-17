@@ -39,6 +39,17 @@ struct SockRpcHeader
 
 
 
+    /*
+        Return filled header from memory buffer
+    */
+    static SockRpcHeader create
+    (
+        char*, /* Buffer */
+        size_t /* Size of buffer */
+    );
+
+
+
     bool isValid();
 
 
@@ -203,5 +214,4 @@ class SockRpc : public Sock
             SockBuffer*, /* buffers parts */
             int
         );
-
 };
