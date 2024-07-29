@@ -371,7 +371,7 @@ Sock* Sock::connect()
 
                     /* Connection waiting timeout */
                     timeval timeout{};
-                    timeout.tv_sec = 1;
+                    timeout.tv_sec = 2;
 
                     /* Connection progress waiting */
                     int selectResult = select
