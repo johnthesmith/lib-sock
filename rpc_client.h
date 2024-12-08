@@ -17,10 +17,15 @@
     Client class definition
 */
 
+
 class RpcClient : public SockRpc
 {
-    private:
+    public:
 
+        typedef std::function< void ( RpcClient* )> OnBeforeCall;
+        typedef std::function< void ( RpcClient* )> OnAfterCall;
+
+    private:
         ParamList* answer   = NULL;
         ParamList* request  = NULL;
 
@@ -49,6 +54,14 @@ class RpcClient : public SockRpc
             int             /* handle of server conenction */
         ) final;
 
+        /*
+            Events
+        */
+
+        /* On before call event */
+        OnBeforeCall onBeforeCall;
+        /* On after call event */
+        OnAfterCall onAfterCall;
 
     public:
 
@@ -177,6 +190,23 @@ class RpcClient : public SockRpc
         (
             Result*,
             SockBuffer*
+        );
+
+
+
+        /*
+            Events
+        */
+
+        RpcClient* setOnBeforeCall
+        (
+            OnBeforeCall
+        );
+
+
+        RpcClient* setOnAfterCall
+        (
+            OnAfterCall
         );
 
 };

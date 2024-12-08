@@ -98,7 +98,8 @@ bool SockRpc::onReadBefore
     string aIp
 )
 {
-    getLog() -> trace( "Reading" );
+    getLog()
+    -> trace( "RPC Reading" );
     return true;
 }
 
@@ -226,7 +227,9 @@ SockRpc* SockRpc::write
     /* Write to socket */
     Sock::write( netBuffer, netBufferSize, aHandle );
 
-    getLog() -> trace( "Writed" ) -> prm( "size bt", ( int )netBufferSize );
+    getLog()
+    -> trace( "RPC writed" )
+    -> prm( "size bt", ( int )netBufferSize );
 
     /* Free memory */
     delete [] netBuffer;

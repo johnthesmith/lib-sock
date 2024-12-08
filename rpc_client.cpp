@@ -112,6 +112,11 @@ RpcClient* RpcClient::call()
 {
     if( isOk() )
     {
+        if( onBeforeCall )
+        {
+            onBeforeCall( this );
+        }
+
         connect();
         if( isOk() )
         {
@@ -125,6 +130,11 @@ RpcClient* RpcClient::call()
             if( !isOk() )
             {
                 disconnect();
+            }
+
+            if( onAfterCall )
+            {
+                onAfterCall( this );
             }
         };
     }
@@ -345,4 +355,30 @@ bool RpcClient::onReadError
     ;
 
     return true;
+}
+
+
+
+/*
+    Events
+*/
+
+RpcClient* RpcClient::setOnBeforeCall
+(
+    OnBeforeCall a
+)
+{
+    onBeforeCall = a;
+    return this;
+}
+
+
+
+RpcClient* RpcClient::setOnAfterCall
+(
+    OnAfterCall a
+)
+{
+    onAfterCall = a;
+    return this;
 }
