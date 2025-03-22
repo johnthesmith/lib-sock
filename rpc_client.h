@@ -5,6 +5,8 @@
     RPC client on socket
 */
 
+#include <functional>
+
 
 #include "sock_rpc.h"
 #include "sock_manager.h"
@@ -59,9 +61,9 @@ class RpcClient : public SockRpc
         */
 
         /* On before call event */
-        OnBeforeCall onBeforeCall;
+        OnBeforeCall onBeforeCall = NULL;
         /* On after call event */
-        OnAfterCall onAfterCall;
+        OnAfterCall onAfterCall = NULL;
 
     public:
 

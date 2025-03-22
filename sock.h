@@ -8,7 +8,6 @@
 #include <vector>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <functional>       /* for lyambda */
 
 #include "../core/result.h"
 
