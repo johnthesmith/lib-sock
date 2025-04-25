@@ -156,10 +156,17 @@ RpcClient* RpcClient::call
         {
             /* Result code processing */
             auto code = getAnswer() -> getString( Path{ "result", "code" });
-            if( code != "ok" )
+            if( code == "" )
             {
-                /* Protocol error */
-                setCode( code );
+                setCode( "UNKNOWN_RPC_CLIENT_ANSWER_CODE" );
+            }
+            else
+            {
+                if( code != "ok" )
+                {
+                    /* Protocol error */
+                    setCode( code );
+                }
             }
         }
         else
