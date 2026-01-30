@@ -54,6 +54,13 @@ Sock::Sock
 */
 Sock::~Sock()
 {
+    /* close all connections  */
+    for( auto connection : connections )
+    {
+        close( connection.handle );
+    }
+
+
     if( privateSockManager )
     {
         handles -> destroy();
@@ -160,6 +167,7 @@ Sock* Sock::listen()
         {
             /* Create handle */
             handle = socket( domain, type, 0 );
+
             if( handle == -1 )
             {
                 setCode( "ErrorOpenHandleForListen" );
@@ -268,7 +276,6 @@ Sock* Sock::listen()
                     &remoteAddressStruct,
                     &remoteSize
                 );
-
                 if( request > 0 )
                 {
                     /* Make request socket unblocked */
@@ -334,6 +341,7 @@ Sock* Sock::connect()
         if( handle == -1 )
         {
             handle = socket( domain, type, 0 );
+
             if( handle == -1 )
             {
                 setCode( "SocketCreateError" );

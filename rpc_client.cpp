@@ -114,9 +114,9 @@ RpcClient* RpcClient::call()
     {
         if( onBeforeCall )
         {
+
             onBeforeCall( this );
         }
-
         connect();
         if( isOk() )
         {

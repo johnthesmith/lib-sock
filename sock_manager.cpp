@@ -6,12 +6,12 @@
 #include <cstring>
 #include <thread>
 #include <unistd.h>
+#include <sys/socket.h>
 
 /*
     Local libraries
 */
 #include "sock_manager.h"
-
 
 
 /*
@@ -103,14 +103,13 @@ SockManager* SockManager::closeHandlesByThread
         int
     >
     save;
-
-    sync.lock();
     {
         for( const auto&[ id, handle ] : handles )
         {
             if( id.find( mask ) != string::npos )
             {
-                close( handle );
+                shutdown( handle, SHUT_RDWR ); /* Закрыть чтение и запись */
+                close( handle ); /* Уничтожить хэндл */
             }
             else
             {
