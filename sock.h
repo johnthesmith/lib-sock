@@ -84,7 +84,7 @@ class Sock : public Result
         SocketDomain        domain                  = SD_INET;
         SocketType          type                    = ST_TCP;
         string              ip                      = "127.0.0.1";
-        unsigned long long  readWaitingTimeoutMcs   = READ_WAITING_TIMEOUT_MCS;
+        long long           readWaitingTimeoutMcs   = READ_WAITING_TIMEOUT_MCS;
         int                 port                    = 42;
 
         /*

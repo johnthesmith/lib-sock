@@ -177,10 +177,11 @@ bool RpcServer::onReadAfter
 */
 bool RpcServer::onCallBefore
 (
-    string aIp /* client ip address */
+    /* client ip address */
+    string aIp
 )
 {
-//    getLog() -> trace( "RPC" ) -> prm( "ip", aIp );
+    getLog() -> trace( "RPC" ) -> prm( "ip", aIp );
     return true;
 }
 
@@ -192,12 +193,11 @@ bool RpcServer::onCallBefore
 */
 RpcServer* RpcServer::onCallAfter
 (
-    ParamList* aArguments,
+    ParamList* /* aArguments */,
     ParamList* aResults
-
 )
 {
-//    getLog() -> trace( "onCallAfter" );
+    getLog() -> trace( "onCallAfter" );
     aResults -> setString( "Answer", "Hello world!" );
     return this;
 }

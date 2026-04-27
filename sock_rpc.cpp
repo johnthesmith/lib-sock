@@ -99,7 +99,8 @@ bool SockRpc::onReadBefore
 )
 {
     getLog()
-    -> trace( "RPC Reading" );
+    -> trace( "RPC Reading" )
+    -> prm( "ip", aIp );
     return true;
 }
 

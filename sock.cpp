@@ -97,8 +97,10 @@ Sock* Sock::create
 Sock* Sock::create
 (
     SockManager*    aSockManager,
-    string          aIp,     /* Ip address */
-    int             aPort    /* Port */
+    /* Ip address */
+    string          aIp,
+    /* Port */
+    int             aPort
 )
 {
     return new Sock
@@ -857,7 +859,7 @@ Sock* Sock::onConnectAfter()
 */
 bool Sock::onReadBefore
 (
-    string aIp
+    string /* aIp */
 )
 {
     return true;
@@ -901,7 +903,7 @@ bool Sock::onReadAfter
 */
 Sock* Sock::onListenBefore
 (
-    unsigned short int aPort
+    unsigned short int /* aPort */
 )
 {
     return this;
@@ -915,7 +917,7 @@ Sock* Sock::onListenBefore
 */
 Sock* Sock::onListenAfter
 (
-    unsigned short int aPort
+    unsigned short int /* Port */
 )
 {
     return this;
@@ -929,7 +931,7 @@ Sock* Sock::onListenAfter
 bool Sock::onReadError
 (
     Result* aResult,
-    SockBuffer* aSock
+    SockBuffer* /* aSock */
 )
 {
     resultFrom( aResult );
